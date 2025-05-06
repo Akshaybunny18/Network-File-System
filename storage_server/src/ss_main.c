@@ -44,3 +44,9 @@ static void sigint_handler(int sig)
     write(STDOUT_FILENO, "\n", 1);
 }
 
+static int directory_exists(const char *path)
+{
+    struct stat st;
+    return (stat(path, &st) == 0) && S_ISDIR(st.st_mode);
+}
+
