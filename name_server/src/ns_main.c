@@ -60,38 +60,3 @@ static void ensure_directory(const char *path)
     }
 }
 
-static void parse_file_list_chunk(const char *data, char files[][128], int *file_count, int *list_complete)
-{
-    if (!data || !*data || *list_complete)
-        return;
-
-    char temp[4096];
-    strncpy(temp, data, sizeof(temp) - 1);
-    temp[sizeof(temp) - 1] = '\0';
-
-    char *save_ptr;
-    char *line = strtok_r(temp, "\n", &save_ptr);
-    while (line && !*list_complete)
-    {
-        if (strncmp(line, "FILE ", 5) == 0)
-        {
-            if (*file_count < 128)
-            {
-                strncpy(files[*file_count], line + 5, 128);
-                files[*file_count][127] = '\0';
-                (*file_count)++;
-            }
-        }
-        else if (strcmp(line, "END_FILE_LIST") == 0)
-        {
-            *list_complete = 1;
-        }
-        line = strtok_r(NULL, "\n", &save_ptr);
-    }
-}
-
-typedef struct
-{
-    int ss_id;
-} StorageServerMonitorArgs;
-
