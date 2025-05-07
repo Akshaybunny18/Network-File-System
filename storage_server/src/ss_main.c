@@ -50,3 +50,41 @@ static int directory_exists(const char *path)
     return (stat(path, &st) == 0) && S_ISDIR(st.st_mode);
 }
 
+static ssize_t read_line_from_socket(int fd, char *buffer, size_t max_len)
+{
+    size_t pos = 0;
+    while (pos < max_len - 1)
+    {
+        char c;
+        ssize_t bytes = recv(fd, &c, 1, 0);
+        if (bytes < 0)
+        {
+            if (errno == EINTR)
+            {
+                continue;
+            }
+            return -1;
+        }
+
+        if (bytes == 0)
+        {
+            return 0;
+        }
+
+        if (c == '\r')
+        {
+            continue;
+        }
+
+        if (c == '\n')
+        {
+            break;
+        }
+
+        buffer[pos++] = c;
+    }
+
+    buffer[pos] = '\0';
+    return (ssize_t)pos;
+}
+
