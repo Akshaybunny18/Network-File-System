@@ -43,8 +43,7 @@ void destroy_lock_manager(LockManager *manager)
     if (!manager)
         return;
 
-    // DEBUG: locking...
-pthread_mutex_lock(&manager->manager_lock);
+    pthread_mutex_lock(&manager->manager_lock);
 
     LockInfo *current = manager->locks;
     while (current)
